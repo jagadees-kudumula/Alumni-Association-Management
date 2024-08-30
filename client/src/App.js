@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Index from './LoginIndex';
+import SignupStudent from './SignupStudent';
+import SignupAlumni from './SignupAlumni';
+import LoginStudent from './LoginStudent';
+import LoginAlumni from './LoginAlumni';
+import ForgotPassword from './ForgotPassword';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <Router>
+            <div className="App">
+                <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/signup/student" element={<SignupStudent />} />
+                    <Route path="/signup/alumni" element={<SignupAlumni />} />
+                    <Route path="/login/student" element={<LoginStudent />} />
+                    <Route path="/login/alumni" element={<LoginAlumni />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    {/* Add additional routes here */}
+                </Routes>
+            </div>
+        </Router>
+    );
 }
 
 export default App;

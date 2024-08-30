@@ -1,0 +1,33 @@
+/* SignupStudent.css */
+
+.signup-background {
+    background: linear-gradient(to right, #fbc2eb, #a6c0fe); /* Gradient background */
+    min-height: 100vh;
+}
+
+.signup-form-container {
+    width: 100%;
+    max-width: 400px; /* Adjust as needed */
+    padding: 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent background for form */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card {
+    background-color: transparent; /* Make card background transparent */
+    border: none;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.form-control {
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+button {
+    padding: 12px;
+    font-size: 0.9em;
+}

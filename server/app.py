@@ -1,0 +1,287 @@
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_cors import CORS
+from flask_migrate import Migrate
+import os
+import random
+import requests
+from flask_mail import Mail, Message
+
+app = Flask(__name__)
+
+
+# Configure the main database URI and additional bind URIs
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/kjr/Desktop/Alumni-Association-Management/server/main.db'
+app.config['SQLALCHEMY_BINDS'] = {
+    'students': 'sqlite:////home/kjr/Desktop/Alumni-Association-Management/server/students.db',
+    'alumni': 'sqlite:////home/kjr/Desktop/Alumni-Association-Management/server/alumni.db'
+}
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('GMAIL_USER')
+app.config['MAIL_PASSWORD'] = 'evloozzyeymqqhsi'
+
+db = SQLAlchemy(app)
+mail = Mail(app)
+
+# Enable CORS for all origins
+CORS(app)
+
+class OTPStore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email_or_mobile = db.Column(db.String(120), nullable=False)
+    otp = db.Column(db.String(6), nullable=False)
+
+class Student(db.Model):
+    __bind_key__ = 'students'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    batch = db.Column(db.String(50), nullable=False)
+    branch = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    mobile = db.Column(db.String(20), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    joining_year = db.Column(db.Integer, nullable=False)
+    college_id = db.Column(db.String(8), nullable=False)
+
+class Alumni(db.Model):
+    __bind_key__ = 'alumni'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    batch = db.Column(db.String(50), nullable=False)
+    branch = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    mobile = db.Column(db.String(20), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    joining_year = db.Column(db.Integer, nullable=False)
+    passout_year = db.Column(db.Integer, nullable=False)
+
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.json
+    email = data.get('email_or_mobile')
+    username = data.get('username')
+    print(username)
+    
+    if not email:
+        return jsonify({'message': 'Email is required'}), 400
+    
+    if not Alumni.query.filter_by(email=email).first() and not Student.query.filter_by(email=email).first():
+        return jsonify({'message': 'User does not match with the provided mail'}), 400    
+    
+    otp = generate_otp()
+    otp_record = OTPStore(email_or_mobile=email, otp=otp)
+    db.session.add(otp_record)
+    db.session.commit() 
+
+    if '@' in email:
+        # Send OTP via email
+        try:
+            msg = Message('Your OTP Code', sender=app.config['MAIL_USERNAME'], recipients=[email])
+            msg.body = f'Your OTP code is {otp}'
+            mail.send(msg)
+            return jsonify({'message': 'OTP sent successfully via email'}), 200
+        except Exception as e:
+            return jsonify({'message': f'Failed to send email: {str(e)}'}), 500
+
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    data = request.json
+    email_or_mobile = data.get('email_or_mobile')
+    otp = data.get('otp')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not email_or_mobile or not otp or not new_password:
+        return jsonify({'message': 'Missing fields'}), 400
+
+    otp_record = OTPStore.query.filter_by(email_or_mobile=email_or_mobile, otp=otp).first()
+    if not otp_record:
+        return jsonify({'message': 'Invalid OTP'}), 400
+    
+    if new_password != confirm_password:
+        return jsonify({"message": "Passwords does not match"}), 400
+
+    user = None
+    if '@' in email_or_mobile:
+        user = Student.query.filter_by(email=email_or_mobile).first() or Alumni.query.filter_by(email=email_or_mobile).first()
+    else:
+        user = Student.query.filter_by(mobile=email_or_mobile).first() or Alumni.query.filter_by(mobile=email_or_mobile).first()
+
+    if user:
+        hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
+        user.password = hashed_password
+        db.session.commit()
+        db.session.delete(otp_record)
+        db.session.commit()
+        return jsonify({'message': 'Password reset successfully!'}), 200
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
+@app.route('/signup/student', methods=['POST'])
+def signup_student():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    batch = data.get('batch')
+    branch = data.get('branch')
+    email = data.get('email')
+    mobile = data.get('mobile')
+    joining_year = data.get('joining_year')
+    confirm_password = data.get('confirm_password')
+    college_id = data.get('college_id')
+
+    if not username or not password or not first_name or not last_name or not batch or not branch or not email or not mobile or not confirm_password or not joining_year:
+        return jsonify({'message': 'Missing fields'}), 400
+    
+    if confirm_password != password:
+        return jsonify({'message': 'Password does not match'}), 400
+    
+    if bool(db.session.query(Student.username).filter_by(username=username).first()):
+        return jsonify({'message': 'Username Already exists!'}), 400
+    
+    if bool(db.session.query(Student.email).filter_by(email=email).first()):
+        return jsonify({'message': 'Email Already exists!'}), 400
+    
+    if bool(db.session.query(Student.mobile).filter_by(mobile=mobile).first()):
+        return jsonify({'message': 'Mobile Number Already exists!'}), 400
+    
+    print(bool(db.session.query(Student.college_id).filter_by(college_id=college_id).first()))
+    if bool(db.session.query(Student.college_id).filter_by(college_id=college_id).first()):
+        return jsonify({'message': 'ID Number Already exists!'}), 400
+
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+    new_student = Student(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            batch=batch,
+            branch=branch,
+            email=email,
+            mobile=mobile,
+            password=hashed_password,
+            joining_year=joining_year,
+            college_id=college_id
+        )
+
+    try:
+        db.session.add(new_student)
+        db.session.commit()
+        return jsonify({'message': 'Student account created successfully!'})
+    except Exception as e:
+        db.session.rollback()
+        print("Error creating student:", e)
+        return jsonify({'message': 'Error creating student account'}), 500
+
+@app.route('/signup/alumni', methods=['POST'])
+def signup_alumni():
+    data = request.json
+    print(data)
+    username = data.get('username')
+    print(username)
+    password = data.get('password')
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    batch = data.get('batch')
+    branch = data.get('branch')
+    email = data.get('email')
+    mobile = data.get('mobile')
+    joining_year = data.get('joining_year')
+    passout_year = data.get('passout_year')
+    confirm_password = data.get('confirm_password')
+
+    if not username or not password or not first_name or not last_name or not batch or not branch or not email or not mobile or not joining_year or not confirm_password or not passout_year:
+        return jsonify({'message': 'Missing fields'}), 400
+    
+    if confirm_password != password:
+        print("a")
+        return jsonify({'message': 'Password does not match'}), 400
+    
+    if bool(db.session.query(Alumni.username).filter_by(username=username).first()):
+        print("b")
+        return jsonify({'message': 'Username Already exists!'}), 400
+    
+    if bool(db.session.query(Alumni.email).filter_by(email=email).first()):
+        print("c")
+        return jsonify({'message': 'Email Already exists!'}), 400
+    
+    if bool(db.session.query(Alumni.mobile).filter_by(mobile=mobile).first()):
+        print("d")
+        return jsonify({'message': 'Mobile Number Already exists!'}), 400
+
+    
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+    print(hashed_password)
+    new_alumni = Alumni(
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            batch=batch,
+            branch=branch,
+            email=email,
+            mobile=mobile,
+            password=hashed_password,
+            joining_year=joining_year,
+            passout_year=passout_year
+        )
+
+    try:
+        db.session.add(new_alumni)
+        db.session.commit()
+        return jsonify({'message': 'Alumni account created successfully!'})
+    except Exception as e:
+        db.session.rollback()
+        print("Error creating student:", e)
+        return jsonify({'message': 'Error creating Alumni account'}), 500
+
+@app.route('/login/student', methods=['POST'])
+def login_student():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'message': 'Missing fields'}), 400
+
+    student = Student.query.filter_by(username=username).first()
+
+    if student and check_password_hash(student.password, password):
+        return jsonify({'message': 'Login successful!', 'user_type': 'student'})
+    else:
+        return jsonify({'message': 'Invalid username or password'}), 401
+
+@app.route('/login/alumni', methods=['POST'])
+def login_alumni():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'message': 'Missing fields'}), 400
+
+    alumni = Alumni.query.filter_by(username=username).first()
+
+    if alumni and check_password_hash(alumni.password, password):
+        return jsonify({'message': 'Login successful!', 'user_type': 'alumni'})
+    else:
+        return jsonify({'message': 'Invalid username or password'}), 401
+
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  # Create tables for all binds
+        
+    app.run(debug=True)
