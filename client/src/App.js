@@ -6,6 +6,8 @@ import SignupAlumni from './SignupAlumni';
 import LoginStudent from './LoginStudent';
 import LoginAlumni from './LoginAlumni';
 import ForgotPassword from './ForgotPassword';
+import StudentDashboard from './StudentDashboard';
+import AlumniDashboard from './AlumniDashboard';
 
 function App() {
     return (
@@ -17,7 +19,9 @@ function App() {
                     <Route path="/signup/alumni" element={<SignupAlumni />} />
                     <Route path="/login/student" element={<LoginStudent />} />
                     <Route path="/login/alumni" element={<LoginAlumni />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/forgot-password/:userType" element={<ForgotPassword />} />
+                    <Route path="/dashboard/student" element={<StudentDashboard />} />
+                    <Route path="/dashboard/alumni" element={<AlumniDashboard />} />
                     {/* Add additional routes here */}
                 </Routes>
             </div>

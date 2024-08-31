@@ -23,9 +23,8 @@ function LoginAlumni() {
 
             const data = await response.json();
 
-            if (response.ok) {
-                setError(null);
-                navigate('/dashboard');  // Redirect to dashboard on successful login
+            if (data.status === 'success') {
+                navigate('/dashboard/alumni');
             } else {
                 setError(data.message);
             }
@@ -36,7 +35,7 @@ function LoginAlumni() {
     };
 
     const handleForgotPassword = () => {
-        navigate('/forgot-password');  // Navigate to the forgot password page
+        navigate('/forgot-password/alumni');  // Navigate to the forgot password page
     };
 
     return (

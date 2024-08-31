@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';  // Custom CSS for additional styling
 
@@ -23,9 +23,8 @@ function LoginStudent() {
 
             const data = await response.json();
 
-            if (response.ok) {
-                setError(null);
-                navigate('/dashboard');  // Redirect to dashboard on successful login
+            if (data.status === 'success') {
+                navigate('/dashboard/student');
             } else {
                 setError(data.message);
             }
@@ -36,7 +35,7 @@ function LoginStudent() {
     };
 
     const handleForgotPassword = () => {
-        navigate('/forgot-password');  // Navigate to the forgot password page
+        navigate('/forgot-password/student');  // Navigate to the forgot password page
     };
 
     return (

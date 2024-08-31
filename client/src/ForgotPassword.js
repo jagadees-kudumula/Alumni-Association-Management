@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
 
 function ForgotPassword() {
+    const { userType } = useParams(); // Get the userType from the route
     const [emailOrMobile, setEmailOrMobile] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -14,6 +16,10 @@ function ForgotPassword() {
     const [loading, setLoading] = useState(false); // State to handle loading
     const navigate = useNavigate();
 
+    if (!userType) {
+        return <div>Error: User type is undefined</div>;
+    }
+
     const handleRequestOTP = async (e) => {
         e.preventDefault();
         setMessage(null);
@@ -21,7 +27,7 @@ function ForgotPassword() {
         setLoading(true); // Show loading spinner
 
         try {
-            const response = await fetch('/forgot-password', {
+            const response = await fetch(`/forgot-password/${userType}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +37,7 @@ function ForgotPassword() {
                     username,
                  }),
             });
-
+            console.log(userType)
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
@@ -52,7 +58,7 @@ function ForgotPassword() {
         setError(null);
 
         try {
-            const response = await fetch('/reset-password', {
+            const response = await fetch(`/reset-password/${userType}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,6 +75,7 @@ function ForgotPassword() {
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
+                navigate(`/login/${userType}`)
             } else {
                 setError(data.message);
             }
@@ -83,7 +90,7 @@ function ForgotPassword() {
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-header text-center">
-                            <h4>Forgot Password</h4>
+                            <h4>Forgot Password ({userType})</h4>
                         </div>
                         <div className="card-body">
                             {error && <div className="alert alert-danger">{error}</div>}

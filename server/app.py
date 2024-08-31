@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session, redirect, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
@@ -7,6 +7,7 @@ import os
 import random
 import requests
 from flask_mail import Mail, Message
+from datetime import timedelta
 
 app = Flask(__name__)
 
@@ -22,8 +23,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.environ.get('GMAIL_USER')
+app.config['MAIL_USERNAME'] = 'jagadeeskudumula3226@gmail.com'
 app.config['MAIL_PASSWORD'] = 'evloozzyeymqqhsi'
+
+# Configure secret key
+app.config['SECRET_KEY'] = os.urandom(24)
+
+# Session cookie settings
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = True  # Only send cookies over HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Set session lifetime
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(seconds=30)
 
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -68,18 +80,25 @@ class Alumni(db.Model):
 def generate_otp():
     return str(random.randint(100000, 999999))
 
-@app.route('/forgot-password', methods=['POST'])
-def forgot_password():
+@app.route('/forgot-password/<user_type>', methods=['POST'])
+def forgot_password(user_type):
     data = request.json
     email = data.get('email_or_mobile')
     username = data.get('username')
-    print(username)
+    
+    if user_type not in ['student', 'alumni']:
+        return jsonify({'message': 'Invalid user type'}), 400
     
     if not email:
         return jsonify({'message': 'Email is required'}), 400
     
-    if not Alumni.query.filter_by(email=email).first() and not Student.query.filter_by(email=email).first():
-        return jsonify({'message': 'User does not match with the provided mail'}), 400    
+    if user_type == 'student':
+        user = Student.query.filter_by(email=email, username=username).first()
+    else:
+        user = Alumni.query.filter_by(email=email, username=username).first()
+    
+    if not user:
+        return jsonify({'message': 'User does not found!'}), 400    
     
     otp = generate_otp()
     otp_record = OTPStore(email_or_mobile=email, otp=otp)
@@ -96,8 +115,8 @@ def forgot_password():
         except Exception as e:
             return jsonify({'message': f'Failed to send email: {str(e)}'}), 500
 
-@app.route('/reset-password', methods=['POST'])
-def reset_password():
+@app.route('/reset-password/<user_type>', methods=['POST'])
+def reset_password(user_type):
     data = request.json
     email_or_mobile = data.get('email_or_mobile')
     otp = data.get('otp')
@@ -116,13 +135,17 @@ def reset_password():
 
     user = None
     if '@' in email_or_mobile:
-        user = Student.query.filter_by(email=email_or_mobile).first() or Alumni.query.filter_by(email=email_or_mobile).first()
+        if user_type == 'student':
+            user = Student.query.filter_by(email=email_or_mobile).first()
+        else:
+            user = Alumni.query.filter_by(email=email_or_mobile).first()
     else:
-        user = Student.query.filter_by(mobile=email_or_mobile).first() or Alumni.query.filter_by(mobile=email_or_mobile).first()
-
+        return jsonify({'message': 'Please enter your mail!'}), 404
+    
     if user:
         hashed_password = generate_password_hash(new_password, method='pbkdf2:sha256')
         user.password = hashed_password
+        print("Password CHanged")
         db.session.commit()
         db.session.delete(otp_record)
         db.session.commit()
@@ -248,6 +271,10 @@ def signup_alumni():
         print("Error creating student:", e)
         return jsonify({'message': 'Error creating Alumni account'}), 500
 
+@app.route('/index', methods=['GET', 'POST'])
+def home():
+    return render_template("index.html")
+
 @app.route('/login/student', methods=['POST'])
 def login_student():
     data = request.json
@@ -260,11 +287,15 @@ def login_student():
     student = Student.query.filter_by(username=username).first()
 
     if student and check_password_hash(student.password, password):
-        return jsonify({'message': 'Login successful!', 'user_type': 'student'})
+        session['user_id'] = student.id
+        session['user_type'] = 'student'
+        session.permanent = True  # Use the session lifetime set earlier
+        # return jsonify({'message': 'Login successful!', 'user_type': 'student'})
+        return jsonify({'message': 'Login successful!', 'status': 'success'}), 200
     else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+        return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
 
-@app.route('/login/alumni', methods=['POST'])
+@app.route('/login/alumni', methods=['POST', 'GET'])
 def login_alumni():
     data = request.json
     username = data.get('username')
@@ -274,14 +305,35 @@ def login_alumni():
         return jsonify({'message': 'Missing fields'}), 400
 
     alumni = Alumni.query.filter_by(username=username).first()
-
+    print(alumni)
+    print(check_password_hash(alumni.password, password))
     if alumni and check_password_hash(alumni.password, password):
-        return jsonify({'message': 'Login successful!', 'user_type': 'alumni'})
+        session['user_id'] = alumni.id
+        session['user_type'] = 'alumni'
+        session.permanent = True  # Use the session lifetime set earlier
+        return jsonify({'message': 'Login successful!', 'status': 'success'}), 200
     else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+        return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
+
+@app.route('/student_dashboard')
+def student_dashboard():
+    if 'user_id' in session:
+        return jsonify({'message': f"Welcome to your dashboard, {session['user_id'], session['user_type']}!"})
+    return jsonify({'message': 'Unauthorized'}), 401
+
+@app.route('/alumni_dashboard')
+def alumni_dashboard():
+    if 'user_id' in session:
+        return jsonify({'message': f"Welcome to your dashboard, {session['user_id'], session['user_type']}!"})
+    return jsonify({'message': 'Unauthorized'}), 401
+    
+@app.route('/logout')
+def logout():
+    session.clear()  # Clear the session
+    return jsonify({'message': 'Logged out successfully!'}), 200
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables for all binds
         
-    app.run(debug=True)
+    app.run(debug=True, host='192.168.225.98')
