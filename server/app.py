@@ -76,6 +76,14 @@ class Alumni(db.Model):
     joining_year = db.Column(db.Integer, nullable=False)
     passout_year = db.Column(db.Integer, nullable=False)
 
+@app.route('/api/chat-credentials', methods=['GET'])
+def get_chat_credentials():
+    # Ideally, you should generate or fetch these credentials securely
+    return jsonify({
+        'projectID': '0cc3ea9f-0401-4152-9cf3-fed46f36d850',
+        'userName': 'jagadees',
+        'userSecret': 'How are you'
+    })
 
 def generate_otp():
     return str(random.randint(100000, 999999))
@@ -317,13 +325,13 @@ def login_alumni():
 
 @app.route('/student_dashboard')
 def student_dashboard():
-    if 'user_id' in session:
+    if 'user_id' in session and session['user_type'] == 'student':
         return jsonify({'message': f"Welcome to your dashboard, {session['user_id'], session['user_type']}!"})
     return jsonify({'message': 'Unauthorized'}), 401
 
 @app.route('/alumni_dashboard')
 def alumni_dashboard():
-    if 'user_id' in session:
+    if 'user_id' in session and session['user_type'] == 'alumni':
         return jsonify({'message': f"Welcome to your dashboard, {session['user_id'], session['user_type']}!"})
     return jsonify({'message': 'Unauthorized'}), 401
     
@@ -336,4 +344,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables for all binds
         
-    app.run(debug=True, host='192.168.225.98')
+    app.run(debug=True)

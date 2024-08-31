@@ -1,13 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Index from './LoginIndex';
-import SignupStudent from './SignupStudent';
-import SignupAlumni from './SignupAlumni';
-import LoginStudent from './LoginStudent';
-import LoginAlumni from './LoginAlumni';
-import ForgotPassword from './ForgotPassword';
-import StudentDashboard from './StudentDashboard';
-import AlumniDashboard from './AlumniDashboard';
+import Index from './components/Index/Index';
+import SignupStudent from './components/Signup/SignupStudent';
+import SignupAlumni from './components/Signup/SignupAlumni';
+import LoginStudent from './components/Login/LoginStudent';
+import LoginAlumni from './components/Login/LoginAlumni';
+import ForgotPassword from './components/ForgotPassword/ForgotPassword';
+import StudentDashboard from './components/StudentDashboard/StudentDashboard';
+import AlumniDashboard from './components/AlumniDashboard/AlumniDashboard';
+import ChatComponent from './components/ChatComponent/ChatComponent';
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/forgot-password/:userType" element={<ForgotPassword />} />
                     <Route path="/dashboard/student" element={<StudentDashboard />} />
                     <Route path="/dashboard/alumni" element={<AlumniDashboard />} />
+                    <Route path="/chat" element={<ChatComponent />} />
                     {/* Add additional routes here */}
                 </Routes>
             </div>

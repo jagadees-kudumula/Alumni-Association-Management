@@ -1,0 +1,127 @@
+/* Styles for SignupStudent component */
+
+/* Navbar styles */
+.signup-navbar {
+    background-color: #739ac0;
+    color: #ffffff;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.signup-navbar-brand {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.signup-navbar-links {
+    display: flex;
+    gap: 1.3rem;
+    size: 0.2rem;
+}
+
+.signup-navbar-link {
+    background-color: #007bff;
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.signup-navbar-link:hover {
+    background-color: #0056b3;
+}
+
+/* Form container styles */
+.signup-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.signup-form-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    
+}
+
+.signup-form-card {
+    margin-top: 30px;
+    width: 50%;
+    max-width: 450px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+.signup-form-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+.error-message, .success-message {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+/* Form field styles */
+.form-field {
+    margin-bottom: 15px;
+}
+
+.form-field label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    font-size: 1em;
+}
+
+.form-field input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+/* Submit button styles */
+.submit-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 1.2em;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
