@@ -9,6 +9,8 @@ import razorpay
 import os
 from flask import make_response
 
+SERVER_VERSION = os.getenv('SERVER_VERSION', '1.0.0')
+
 client = razorpay.Client(auth=(os.getenv('RAZORPAY_KEY'), os.getenv('RAZORPAY_SECRET')))
 
 def generate_otp():
@@ -284,6 +286,7 @@ def init_app(app):
 
         if student and check_password_hash(student.password, password):
             access_token = create_access_token(identity={'id': student.id, 'user_type': 'student'})
+            print(access_token)
             return jsonify({'message': 'Login successful!', 'access_token': access_token, 'status': 'success'}), 200
         else:
             return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
@@ -301,6 +304,7 @@ def init_app(app):
 
         if alumni and check_password_hash(alumni.password, password):
             access_token = create_access_token(identity={'id': alumni.id, 'user_type': 'alumni'})
+            print(access_token)
             return jsonify({'message': 'Login successful!', 'access_token': access_token, 'status': 'success'}), 200
         else:
             return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
@@ -308,9 +312,11 @@ def init_app(app):
     @app.route('/student_dashboard')
     @jwt_required()
     def student_dashboard():
+        print("Jagadees")
         current_user = get_jwt_identity()
+        print(current_user)
         if current_user['user_type'] != 'student':
-            return jsonify({'message': 'Access forbidden: not a student'}), 403
+            return jsonify({'message': 'Access forbidden: not a student'}), 200
 
         # Fetch data for the student dashboard
         return jsonify({'message': 'Welcome to the Student Dashboard!'})
@@ -319,6 +325,7 @@ def init_app(app):
     @jwt_required()
     def alumni_dashboard():
         current_user = get_jwt_identity()
+        print(current_user)
         if current_user['user_type'] != 'alumni':
             return jsonify({'message': 'Access forbidden: not an alumni'}), 403
 

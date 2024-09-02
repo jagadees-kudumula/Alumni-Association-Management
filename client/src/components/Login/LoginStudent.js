@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGraduate, faUserTie, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
 
+const SOCKET_SERVER_URL = 'http://localhost:5000';
 
 function LoginStudent() {
     const [username, setUsername] = useState('');
@@ -12,6 +14,17 @@ function LoginStudent() {
     const navigate = useNavigate();
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+    function isTokenExpired(token) {
+        try {
+          const decoded = jwtDecode(token);
+          const now = Math.floor(Date.now() / 1000);
+          return decoded.exp < now;
+        } catch (e) {
+          console.error('Invalid token', e);
+          return true;
+        }
+      }
+
     const handleToggleClick = () => {
         setMobileMenuOpen(!isMobileMenuOpen);
     };
@@ -19,10 +32,10 @@ function LoginStudent() {
 
     // Prevent access to login page if already logged in
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
-        // If a user is already logged in, redirect them to the alumni dashboard
-        if (token) {
+        const token = localStorage.getItem('student-token'); 
+        // If a user is already logged in, redirect them to the Student dashboard
+        if (token && !isTokenExpired(token)) {
+            console.log(token);
             navigate('/dashboard/student', { replace: true });
         }
 
@@ -39,7 +52,6 @@ function LoginStudent() {
             });
         };
     }, [navigate]);
-
 
     const handleHomeClick = () => {
         navigate('/'); // Navigate to the home page
@@ -63,7 +75,6 @@ function LoginStudent() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch('/login/student', {
                 method: 'POST',
@@ -76,15 +87,26 @@ function LoginStudent() {
             const data = await response.json();
 
             if (data.status === 'success') {
-                localStorage.setItem('token', data.token);
-                navigate('/dashboard/student');
-            } else {
+                // console.log(data)
+                
+                localStorage.setItem('student-token', data.access_token); // Store JWT token
+                navigate('/dashboard/student', { replace: true });
+
+                // Prevent back navigation to the login page
+                window.history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', () => {
+                    navigate('/', { replace: true });});
+                
+                
+            } else{
                 setError(data.message);
             }
         } catch (error) {
             setError('An error occurred. Please try again.');
             console.error('Error:', error);
         }
+
+        
     };
 
     const handleForgotPassword = () => {

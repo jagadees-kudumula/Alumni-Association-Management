@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css'; // Import the CSS file;
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGraduate, faUserTie, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { jwtDecode } from 'jwt-decode';
 
 function LoginAlumni() {
     const [username, setUsername] = useState('');
@@ -11,14 +12,9 @@ function LoginAlumni() {
     const navigate = useNavigate();
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const handleToggleClick = () => {
-        setMobileMenuOpen(!isMobileMenuOpen);
-    };
-
     // Prevent access to login page if already logged in
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
+        const token = localStorage.getItem('alumni-token'); 
         // If a user is already logged in, redirect them to the alumni dashboard
         if (token) {
             navigate('/dashboard/alumni', { replace: true });
@@ -30,6 +26,7 @@ function LoginAlumni() {
             window.history.pushState(null, null, window.location.href);
             navigate('/', { replace: true });
         });
+  
 
         return () => {
             window.removeEventListener('popstate', () => {
@@ -37,6 +34,10 @@ function LoginAlumni() {
             });
         };
     }, [navigate]);
+
+    const handleToggleClick = () => {
+        setMobileMenuOpen(!isMobileMenuOpen);
+    };
 
 
     const handleHomeClick = () => {
@@ -74,21 +75,25 @@ function LoginAlumni() {
             const data = await response.json();
 
             if (data.status === 'success') {
-                localStorage.setItem('token', data.token); // Store JWT token
+                // console.log(data)
+                
+                localStorage.setItem('alumni-token', data.access_token); // Store JWT token
                 navigate('/dashboard/alumni', { replace: true });
 
                 // Prevent back navigation to the login page
                 window.history.pushState(null, null, window.location.href);
                 window.addEventListener('popstate', () => {
-                    navigate('/', { replace: true });
-                });
-            } else {
+                    navigate('/', { replace: true });});
+                
+                
+            } else{
                 setError(data.message);
             }
         } catch (error) {
             setError('An error occurred. Please try again.');
             console.error('Error:', error);
         }
+       
     };
 
     const handleForgotPassword = () => {

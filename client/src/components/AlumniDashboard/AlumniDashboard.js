@@ -12,7 +12,7 @@ function AlumniDashboard() {
 
   //Handles log out
   const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove JWT token from localStorage
+    localStorage.removeItem('alumni-token'); // Remove JWT token from localStorage
     navigate('/', { replace: true }); // Redirect to alumni login page
   };
 
