@@ -1,0 +1,59 @@
+/* studentportal.css */
+
+/* Sidebar links */
+  .sidebar {
+    min-height: 100vh;
+    padding-top: 150px;
+  }
+
+.sidebar .nav-link {
+  transition: background-color 1s, color 0.3s;
+  min-height: 10vh;
+
+ 
+}
+.logout{
+  background-color: blue;
+}
+
+.sidebar .nav-link:hover {
+  background-color:blue; /* Darker background on hover */
+  color: blue ;/* Lighter text color on hov */
+  border-radius:10px;
+  
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  
+  align-items:stretch;
+ 
+}
+
+.dashboard-card:hover {
+  transform: scale(1.1); /* Slightly enlarge the card */
+  box-shadow: 2 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow on hover */
+}
+
+.dashboard-header:hover{
+  
+  border-radius: 10px;
+  
+  box-shadow: 2 4px 8px rgb(82, 10, 10);
+}
+.sidebar {
+  position: fixed;
+  height: 100vh;
+  overflow-y: auto; /* Allows scrolling within the sidebar */
+  top: 0;
+  left: 0;
+  transition: width 0.3s;
+}
+
+
+
+.content {
+  transition: margin-left 0.3s;
+}
+

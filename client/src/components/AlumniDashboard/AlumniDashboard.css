@@ -1,0 +1,55 @@
+/* Alumni Portal Styles */
+
+/* Sidebar styling */
+.sidebar {
+    background-color: #343a40;
+    padding-top: 150px;
+    min-height: 100vh;
+  }
+  
+  .sidebar .nav-link {
+    color: #ffffff;
+    transition: background-color 0.3s ease;
+    min-height: 10vh;
+  }
+  
+  .sidebar .nav-link:hover {
+    background-color:blue;
+    border-radius: 10px;
+  }
+  
+  /* Header styling */
+  
+  
+  .user-info .badge {
+    font-size: 1.2rem;
+  }
+  
+  /* Card styling */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .card-title {
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .dashboard-header:hover{
+  
+    border-radius: 10px;
+    
+    box-shadow: 2 4px 8px 5px black;
+  }
+  
+  
+
+

@@ -8,6 +8,8 @@ import random
 import requests
 from flask_mail import Mail, Message
 from datetime import timedelta
+import razorpay
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
@@ -20,11 +22,17 @@ app.config['SQLALCHEMY_BINDS'] = {
 }
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'jagadeeskudumula3226@gmail.com'
-app.config['MAIL_PASSWORD'] = 'evloozzyeymqqhsi'
+load_dotenv()
+
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = ('Alumni Association', os.getenv('MAIL_USERNAME'))
+
+client = razorpay.Client(auth=(os.getenv('RAZORPAY_KEY'), os.getenv('RAZORPAY_SECRET')))
+
 
 # Configure secret key
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -75,6 +83,61 @@ class Alumni(db.Model):
     password = db.Column(db.String(120), nullable=False)
     joining_year = db.Column(db.Integer, nullable=False)
     passout_year = db.Column(db.Integer, nullable=False)
+
+# Set up Razorpay client
+# client = razorpay.Client(auth=(os.getenv('RAZORPAY_KEY_ID'), os.getenv('RAZORPAY_KEY_SECRET')))
+
+def send_thank_you_email(name, email):
+    msg = Message('Thank You for Your Donation!',
+                  recipients=[email])
+    msg.body = f"Dear {name},\n\nThank you for your generous donation! Your support helps us continue our mission and serve our community.\n\nBest regards,\nAlumni Association"
+    mail.send(msg)
+
+@app.route('/create-order', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    amount = data.get('amount')
+    name = data.get('name')
+    email = data.get('email')
+
+    try:
+        order = client.order.create({
+            'amount': amount,
+            'currency': 'INR',
+            'payment_capture': '1',
+        })
+
+        return jsonify({
+            'id': order['id'],
+            'currency': order['currency'],
+            'amount': order['amount'],
+            'key': os.getenv('RAZORPAY_KEY_ID')
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/verify-payment', methods=['POST'])
+def verify_payment():
+    data = request.get_json()
+    order_id = data.get('order_id')
+    payment_id = data.get('payment_id')
+    signature = data.get('signature')
+
+    # Verify payment signature
+    generated_signature = client.utility.verify_payment_signature({
+        'order_id': order_id,
+        'payment_id': payment_id,
+        'signature': signature
+    })
+
+    if generated_signature:
+        # Process payment verification and save details to database
+        # Example: Save to database (pseudo-code)
+        # save_donation(name, email, amount, payment_id)
+        send_thank_you_email(data['name'], data['email'])
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False}), 400
 
 @app.route('/api/chat-credentials', methods=['GET'])
 def get_chat_credentials():
@@ -313,8 +376,6 @@ def login_alumni():
         return jsonify({'message': 'Missing fields'}), 400
 
     alumni = Alumni.query.filter_by(username=username).first()
-    print(alumni)
-    print(check_password_hash(alumni.password, password))
     if alumni and check_password_hash(alumni.password, password):
         session['user_id'] = alumni.id
         session['user_type'] = 'alumni'

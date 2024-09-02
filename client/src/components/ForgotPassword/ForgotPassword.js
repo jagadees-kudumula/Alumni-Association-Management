@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import { useNavigate, useParams } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function ForgotPassword() {
-    const { userType } = useParams(); // Get the userType from the route
+    const { userType } = useParams();
     const [emailOrMobile, setEmailOrMobile] = useState('');
     const [otp, setOtp] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [username, setUsername] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [step, setStep] = useState(1); // 1: Enter email/mobile, 2: Enter OTP and new password
+    const [step, setStep] = useState(1);
     const [message, setMessage] = useState(null);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false); // State to handle loading
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     if (!userType) {
@@ -24,7 +23,7 @@ function ForgotPassword() {
         e.preventDefault();
         setMessage(null);
         setError(null);
-        setLoading(true); // Show loading spinner
+        setLoading(true);
 
         try {
             const response = await fetch(`/forgot-password/${userType}`, {
@@ -37,7 +36,7 @@ function ForgotPassword() {
                     username,
                  }),
             });
-            console.log(userType)
+
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
@@ -48,7 +47,7 @@ function ForgotPassword() {
         } catch (error) {
             setError('An error occurred. Please try again.');
         } finally {
-            setLoading(false); // Hide loading spinner
+            setLoading(false);
         }
     };
 
@@ -75,7 +74,7 @@ function ForgotPassword() {
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
-                navigate(`/login/${userType}`)
+                navigate(`/login/${userType}`);
             } else {
                 setError(data.message);
             }
@@ -86,10 +85,15 @@ function ForgotPassword() {
 
     return (
         <div className="container mt-5">
+            <div className="text-center mb-4">
+                <button className="btn btn-outline-secondary" onClick={() => navigate('/')}>
+                    Home
+                </button>
+            </div>
             <div className="row justify-content-center">
                 <div className="col-md-6">
-                    <div className="card">
-                        <div className="card-header text-center">
+                    <div className="card shadow">
+                        <div className="card-header text-center bg-primary text-white">
                             <h4>Forgot Password ({userType})</h4>
                         </div>
                         <div className="card-body">
@@ -116,7 +120,7 @@ function ForgotPassword() {
                                         />
                                     </div>
                                     <div className="form-group mt-3">
-                                        <label htmlFor="emailOrMobile">Email</label>
+                                        <label htmlFor="emailOrMobile">Email or Mobile</label>
                                         <input
                                             type="text"
                                             id="emailOrMobile"

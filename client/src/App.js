@@ -9,6 +9,9 @@ import ForgotPassword from './components/ForgotPassword/ForgotPassword';
 import StudentDashboard from './components/StudentDashboard/StudentDashboard';
 import AlumniDashboard from './components/AlumniDashboard/AlumniDashboard';
 import ChatComponent from './components/ChatComponent/ChatComponent';
+import DonationsPage from './components/DonationsPage/DonationsPage';
+import StudentProfile from './components/StudentProfile/StudentProfile';
+import Contact from './components/Contact/Contact'
 
 function App() {
     return (
@@ -24,6 +27,9 @@ function App() {
                     <Route path="/dashboard/student" element={<StudentDashboard />} />
                     <Route path="/dashboard/alumni" element={<AlumniDashboard />} />
                     <Route path="/chat" element={<ChatComponent />} />
+                    <Route path="/donate" element={<DonationsPage />} />
+                    <Route path='/student/profile' element={<StudentProfile />}/>
+                    <Route path='/contact' element={<Contact />}/>
                     {/* Add additional routes here */}
                 </Routes>
             </div>

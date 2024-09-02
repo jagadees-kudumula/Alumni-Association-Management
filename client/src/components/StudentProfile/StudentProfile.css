@@ -1,0 +1,242 @@
+/* General Styling */
+.student-profile {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.profile-picture-container {
+    position: relative;
+    margin-right: 20px;
+}
+
+.profile-picture {
+    width: 120px; /* Updated for consistency */
+    height: 120px; /* Updated for consistency */
+    border-radius: 50%;
+    border: 3px solid #333;
+    object-fit: cover;
+    transition: transform 0.3s ease-in-out;
+}
+
+.profile-picture:hover {
+    transform: scale(1.1);
+}
+
+.profile-picture-buttons {
+    position: absolute;
+    bottom: 0; /* Move to bottom */
+    left: 0; /* Move to left */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.profile-picture-container:hover .profile-picture-buttons {
+    opacity: 1;
+}
+
+.profile-picture-buttons label,
+.profile-picture-buttons .edit-options {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    text-align: center;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+}
+
+.profile-picture-buttons .edit-options {
+    background-color: #28a745;
+}
+
+.profile-picture-buttons .edit-options:hover .options-dropdown {
+    display: block;
+}
+
+.profile-picture-buttons .options-dropdown {
+    display: none;
+    position: absolute;
+    top: auto;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    width: auto;
+    z-index: 10;
+}
+
+.profile-picture-buttons .options-dropdown button {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.profile-picture-buttons .options-dropdown button:hover {
+    background-color: #f1f1f1;
+}
+
+/* Other Styling */
+.profile-details {
+    margin-left: 20px;
+}
+
+.profile-details input {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.card {
+    background-color: white;
+    padding: 50px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.interactive-heading {
+    cursor: pointer;
+    user-select: none;
+}
+
+textarea,
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.skills-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.skills-section li {
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.skills-section button {
+    margin-left: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    padding: 3px 5px;
+}
+
+.edit-button-container {
+    text-align: right;
+}
+
+.edit-button-container button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .edit-button-container button .fa-pencil-alt {
+    margin-right: 5px;
+  }
+  
+
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+}
+
+.student-profile:hover {
+    background-color: rgba(173, 216, 230, 0.2); /* Light blue shade */
+}
+
+.card {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    background-color: rgba(135, 206, 235, 0.3); /* Light blue shade */
+}
+
+.interactive-heading {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.25rem;
+}
+
+.interactive-heading:hover {
+    color: #007bff;
+}
+
+.skills-section ul li button {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.skills-section ul li button:hover {
+    background-color: #c82333;
+}
+
+.skills-section button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.skills-section button:hover {
+    background-color: #0056b3;
+}

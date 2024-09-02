@@ -1,0 +1,46 @@
+.about-container {
+    max-width: 1000px;
+}
+
+.about-title, .about-subtitle {
+    font-weight: bold;
+    color: #0f0202;
+}
+
+.about-title {
+    font-size: 2.5rem;
+}
+
+.about-subtitle {
+    font-size: 2rem;
+}
+
+.about-card {
+    background-color: #040f1b;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.about-carousel {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.about-image {
+    height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.about-video {
+    width: 100%;
+    border-radius: 10px;
+}
+.body{
+    text-align: center;
+}

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock, faPhone, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
-import './Signup.css'; // Import the CSS file
+import './Signup.css'; // Import the CSS file;
+import { faUserGraduate, faUserTie, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 function SignupAlumni() {
     const [firstName, setFirstName] = useState('');
@@ -19,6 +20,11 @@ function SignupAlumni() {
     const [success, setSuccess] = useState(null);
     const [passoutYear, setPassoutYear] = useState(null);
     const navigate = useNavigate();
+    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+    const handleToggleClick = () => {
+        setMobileMenuOpen(!isMobileMenuOpen);
+    };
 
     const handleHomeClick = () => {
         navigate('/'); // Navigate to the home page
@@ -85,14 +91,34 @@ function SignupAlumni() {
 
     return (
         <div className="signup-page">
-            <nav className="signup-navbar">
-                <h1 className="signup-navbar-brand">Alumni Association</h1>
-                <div className="signup-navbar-links">
-                    <button onClick={handleAlumniLoginClick} className="signup-navbar-link">Login</button>
-                    <button onClick={handleHomeClick} className="signup-navbar-link">Home</button>
-                    <button onClick={handleAboutClick} className="signup-navbar-link">About</button>
-                    <button onClick={handleContactClick} className="signup-navbar-link">Contact</button>
-                    <button onClick={handleHelpClick} className="signup-navbar-link">Help</button>
+            <nav className="indexnavbar">
+                <a className="indexnavbar-brand" href="/">Alumni Association</a>
+                <div className="indexnavbar-links">
+                    {/* Hamburger Menu for Mobile */}
+                    <button className="mobile-menu-icon" onClick={handleToggleClick}>
+                        <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
+                        {console.log("Printed")}
+                    </button>
+
+                    {/* Regular links for desktop */}
+                    <div className="desktop-navbar-links">
+                        <button onClick={handleAlumniLoginClick} className="btn btn-primary">LogIn</button>
+                        <button onClick={handleHomeClick} className="btn btn-primary">Home</button>
+                        <button onClick={handleAboutClick} className="btn btn-primary">About</button>
+                        <button onClick={handleContactClick} className="btn btn-primary">Contact</button>
+                        <button onClick={handleHelpClick} className="btn btn-primary">Help</button>
+                    </div>
+
+                    {/* Dropdown menu for mobile */}
+                    {isMobileMenuOpen && (
+                        <div className="mobile-navbar-dropdown">
+                            <button onClick={handleAlumniLoginClick} className="btn btn-primary">LogIn</button>
+                            <button onClick={handleHomeClick} className="btn btn-primary">Home</button>
+                            <button onClick={handleAboutClick} className="btn btn-primary">About</button>
+                            <button onClick={handleContactClick} className="btn btn-primary">Contact</button>
+                            <button onClick={handleHelpClick} className="btn btn-primary">Help</button>
+                        </div>
+                    )}
                 </div>
             </nav>
             <div className="signup-form-container">

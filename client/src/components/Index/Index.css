@@ -1,17 +1,18 @@
-/* Index.css */
+/* General Styling */
 .index-page {
     background-color: #e3e9f0;
     padding-top: 0px; /* Adjust for fixed navbar height */
 }
 
-.navbar {
+/* Navbar Styling */
+.indexnavbar {
     position: fixed;
     width: 100%;
     top: 0;
     left: 0;
     background-color: #84a5d8; /* Dark background color */
     color: #615353;
-    padding: 1.5rem;
+    padding: 0.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,7 +20,7 @@
     z-index: 1000;
 }
 
-.navbar-brand {
+.indexnavbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
     color: #ffffff;
@@ -27,50 +28,99 @@
     margin-left: 0.8rem;
 }
 
-.navbar-links {
+.indexnavbar-links {
     display: flex;
-    gap: 2rem;
-    margin-right: 2.5rem;
-    font-size: larger;
+    align-items: center;
 }
 
-.nav-link {
+/* Hide mobile menu icon on desktop */
+.mobile-menu-icon {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+/* Regular Navbar Links for Desktop */
+.desktop-navbar-links .btn {
     color: #ffffff;
     text-decoration: none;
-    padding: 1rem 1rem;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
     border-radius: 0.15rem;
+    background-color: hsl(187, 51%, 43%);
+    border: none;
 }
 
-.nav-link:hover {
+.desktop-navbar-links .btn:hover {
     background-color: #5bd9ff; /* Slightly lighter background on hover */
     color: #070707;
-    padding: 0.1rem 0.1rem;
 }
 
-.header {
+/* Mobile Dropdown Menu */
+@media (max-width: 768px) {
+    .desktop-navbar-links {
+        display: none; /* Hide desktop links on mobile */
+    }
+
+    .mobile-menu-icon {
+        display: block; /* Show mobile menu icon */
+    }
+
+    .mobile-navbar-dropdown {
+        display: flex;
+        flex-direction: column;
+        background-color: #84a5d8;
+        position: absolute;
+        top: 3.5rem; /* Below the navbar */
+        right: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .mobile-navbar-dropdown .btn {
+        width: 100%;
+        text-align: left;
+        padding: 1rem;
+        border-radius: 0;
+        color: white;
+        background-color: hsl(187, 51%, 43%);
+    }
+
+    .mobile-navbar-dropdown .btn:hover {
+        background-color: #5bd9ff; /* Slightly lighter background on hover */
+    }
+}
+
+/* Main Content Styling */
+.indexheader {
     text-align: center;
-    margin-top: 80px; /* Space below the fixed navbar */
-    margin-bottom: 30px;
+    margin-top: 5.4rem; /* Space below the fixed navbar */
 }
 
-.display-4 {
-    font-weight: 700;
+.indexdisplay-4 {
+    font-weight: 500;
     color: #007bff;
+    margin-top: 30px;
 }
 
-.lead {
-    color: #6c757d;
+.indexlead {
+    color: #4d545a;
+    font-weight: 400;
+    font-size: 24px;
 }
 
-.main-content {
+.indexmain-content {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 1rem;
+    padding: 3.1rem;
 }
 
-.option-cards {
+.indexoption-cards {
     display: flex;
     justify-content: space-around;
     width: 100%;
@@ -79,7 +129,7 @@
     flex-wrap: wrap;
 }
 
-.option-card {
+.indexoption-card {
     border-radius: 15px;
     padding: 30px;
     background-color: #ffffff;
@@ -89,29 +139,29 @@
     text-align: center;
 }
 
-.icon {
+.indexicon {
     font-size: 4rem; /* Slightly larger icons */
     color: #007bff;
 }
 
-.card-title {
+.indexcard-title {
     font-size: 1.5rem;
     color: #343a40;
 }
 
-.card-text {
+.indexcard-text {
     font-size: 1rem;
     color: #6c757d;
 }
 
-.button-group {
+.indexbutton-group {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
 }
 
-.btn {
+.indexbtn {
     font-weight: bold;
     padding: 12px 20px; /* Consistent padding */
     border-radius: 0.25rem;
@@ -123,31 +173,31 @@
     text-align: center;
 }
 
-.btn-primary {
+.indexbtn-primary {
     background-color: #007bff;
     border: 1px solid #007bff;
     color: #ffffff;
 }
 
-.btn-secondary {
+.indexbtn-secondary {
     background-color: #6c757d;
     border: 1px solid #6c757d;
     color: #ffffff;
 }
 
-.btn-outline-primary {
+.indexbtn-outline-primary {
     color: #007bff;
     border: 1px solid #007bff;
 }
 
-.btn-outline-secondary {
+.indexbtn-outline-secondary {
     color: #6c757d;
     border: 1px solid #6c757d;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-outline-primary:hover,
-.btn-outline-secondary:hover {
+.indexbtn-primary:hover,
+.indexbtn-secondary:hover,
+.indexbtn-outline-primary:hover,
+.indexbtn-outline-secondary:hover {
     opacity: 0.9; /* Slight opacity change on hover */
 }

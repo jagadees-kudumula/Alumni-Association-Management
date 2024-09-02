@@ -1,0 +1,106 @@
+.help-us-container {
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.help-us-title {
+    font-size: 2.5rem;
+    color: #007bff;
+    margin-bottom: 2rem;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+.section-description {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.faq-question {
+    font-size: 1.25rem;
+    color: #343a40;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+}
+
+.submitted-questions {
+    margin-bottom: 2rem;
+    max-width: 800px;
+    width: 100%;
+}
+
+.submitted-questions-title {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 1rem;
+}
+
+.list-group-item {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.list-group-item:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.help-us-question-box {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+.question-title {
+    font-size: 1.5rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #007bff, #28a745);
+    color: #fff;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(45deg, #28a745, #007bff);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+/* HelpUs.css */
+.help-us-container {
+    max-width: 800px; /* Adjust this value to reduce or increase the width */
+    background-color: #f9f9f9; /* Optional: Add a background color */
+    padding: 20px; /* Optional: Add some padding */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+}
+/* HelpUs.css */
+.text-danger {
+    color: red;
+}
+
