@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import Index from './components/Index/Index';
 import SignupStudent from './components/Signup/SignupStudent';
 import SignupAlumni from './components/Signup/SignupAlumni';
@@ -14,13 +14,12 @@ import StudentProfile from './components/StudentProfile/StudentProfile';
 import Contact from './components/Contact/Contact'
 import { useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
 
 const TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000; // 10 minutes
 const PING_INTERVAL = 5000;  // 5 seconds
 
 function App() {
-    const navigate = useNavigate();
     useEffect(() => {
         const pingServer = async () => {
             try {
@@ -29,7 +28,7 @@ function App() {
             } catch (error) {
                 console.error('Server is down', error);
                 localStorage.clear();  // Clear local storage when server is unreachable
-                navigate('/');
+
             }
         };
 
@@ -96,7 +95,7 @@ function App() {
                     <Route path="/login/student" element={<LoginStudent />} />
                     <Route path="/login/alumni" element={<LoginAlumni />} />
                     <Route path="/forgot-password/:userType" element={<ForgotPassword />} />
-                    <Route path="/dashboard/student" element={<StudentDashboard />} />
+                    <Route path="/dashboard/student" element={<StudentDashboard />}/>
                     <Route path="/dashboard/alumni" element={<AlumniDashboard />} />
                     <Route path="/chat" element={<ChatComponent />} />
                     <Route path="/donate" element={<DonationsPage />} />

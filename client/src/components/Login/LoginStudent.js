@@ -33,7 +33,6 @@ function LoginStudent() {
         const token = localStorage.getItem('student-token'); 
         // If a user is already logged in, redirect them to the Student dashboard
         if (token && !isTokenExpired(token)) {
-            console.log(token);
             navigate('/dashboard/student', { replace: true });
         }
 
@@ -103,8 +102,10 @@ function LoginStudent() {
                 setError(data.message);
             }
         } catch (error) {
-            setError('An error occurred. Please try again.');
-            console.error('Error:', error);
+            // Network error or server down
+            setError('Server is down, redirecting to index page.');
+            // Redirect to index page after handling error
+            setTimeout(() => navigate('/'), 1000); // Redirect after 3 seconds for user feedback
         }
 
         

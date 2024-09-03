@@ -31,15 +31,16 @@ const StudentDashboard = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response.data);
         setMessage(response.data.message);
       } catch (error) {
         if (error.response && error.response.status === 403) {
           setError('Access forbidden: not a student');
           navigate('/login/student');  // Redirect to login or another page
         } else {
-          console.log(error);
-          setError('An error occurred while fetching the dashboard data.');
+            // Network error or server down
+            setError('Server is down, redirecting to index page.');
+            // Redirect to index page after handling error
+            setTimeout(() => navigate('/'), 3000); // Redirect after 3 seconds for user feedback
         }
       }
     };

@@ -91,8 +91,11 @@ function LoginAlumni() {
                 setError(data.message);
             }
         } catch (error) {
-            setError('An error occurred. Please try again.');
-            console.error('Error:', error);
+            // Network error or server down
+            setError('Server is down, redirecting to index page.');
+            // Redirect to index page after handling error
+            setTimeout(() => navigate('/'), 3000); // Redirect after 3 seconds for user feedback
+            console.log(error);
         }
        
     };

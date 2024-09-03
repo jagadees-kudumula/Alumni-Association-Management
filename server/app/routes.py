@@ -316,9 +316,7 @@ def init_app(app):
     @app.route('/student_dashboard')
     @jwt_required()
     def student_dashboard():
-        print("Jagadees")
         current_user = get_jwt_identity()
-        print(current_user)
         if current_user['user_type'] != 'student':
             return jsonify({'message': 'Access forbidden: not a student'}), 200
 
@@ -329,7 +327,6 @@ def init_app(app):
     @jwt_required()
     def alumni_dashboard():
         current_user = get_jwt_identity()
-        print(current_user)
         if current_user['user_type'] != 'alumni':
             return jsonify({'message': 'Access forbidden: not an alumni'}), 403
 
