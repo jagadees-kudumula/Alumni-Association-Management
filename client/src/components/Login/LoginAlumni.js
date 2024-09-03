@@ -78,6 +78,7 @@ function LoginAlumni() {
                 // console.log(data)
                 
                 localStorage.setItem('alumni-token', data.access_token); // Store JWT token
+                localStorage.setItem('alumni-refresh-token', data.refresh_token);  // Store refresh token
                 navigate('/dashboard/alumni', { replace: true });
 
                 // Prevent back navigation to the login page

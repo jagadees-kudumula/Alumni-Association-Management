@@ -3,7 +3,7 @@ from .models import Student, Alumni, OTPStore
 from .extensions import db, mail
 from flask_mail import Message
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, create_refresh_token
 import random
 import razorpay
 import os
@@ -23,6 +23,10 @@ def send_thank_you_email(name, email):
     mail.send(msg)
 
 def init_app(app):
+    @app.route('/api/version', methods=['GET'])
+    def get_version():
+        return jsonify({'version': SERVER_VERSION})
+
     @app.after_request
     def add_header(response):
         response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
@@ -286,8 +290,8 @@ def init_app(app):
 
         if student and check_password_hash(student.password, password):
             access_token = create_access_token(identity={'id': student.id, 'user_type': 'student'})
-            print(access_token)
-            return jsonify({'message': 'Login successful!', 'access_token': access_token, 'status': 'success'}), 200
+            refresh_token = create_refresh_token(identity={'id': student.id, 'user_type': 'student'})
+            return jsonify({'message': 'Login successful!', 'access_token': access_token, 'refresh_token': refresh_token, 'status': 'success'}), 200
         else:
             return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
 
@@ -304,8 +308,8 @@ def init_app(app):
 
         if alumni and check_password_hash(alumni.password, password):
             access_token = create_access_token(identity={'id': alumni.id, 'user_type': 'alumni'})
-            print(access_token)
-            return jsonify({'message': 'Login successful!', 'access_token': access_token, 'status': 'success'}), 200
+            refresh_token = create_refresh_token(identity={'id': alumni.id, 'user_type': 'alumni'})
+            return jsonify({'message': 'Login successful!', 'access_token': access_token, 'refresh_token': refresh_token, 'status': 'success'}), 200
         else:
             return jsonify({'message': 'Invalid username or password', 'status': 'error'}), 401
 
@@ -331,3 +335,24 @@ def init_app(app):
 
         # Fetch data for the alumni dashboard
         return jsonify({'message': 'Welcome to the Alumni Dashboard!'})
+    @app.route('/student_refresh', methods=['POST'])
+    @jwt_required(refresh=True)
+    def student_refresh():
+        current_user = get_jwt_identity()
+        if current_user['user_type'] == 'student':
+            new_token = create_access_token(identity=current_user)
+            return jsonify(access_token=new_token), 200
+        return jsonify(msg="Invalid token"), 403
+
+    @app.route('/alumni_refresh', methods=['POST'])
+    @jwt_required(refresh=True)
+    def alumni_refresh():
+        current_user = get_jwt_identity()
+        if current_user['user_type'] == 'alumni':
+            new_token = create_access_token(identity=current_user)
+            return jsonify(access_token=new_token), 200
+        return jsonify(msg="Invalid token"), 403
+    
+    @app.route('/ping', methods=['GET'])
+    def ping():
+        return jsonify(msg="Server is running"), 200

@@ -35,3 +35,5 @@ class Config:
     # Razorpay configuration
     RAZORPAY_KEY = os.getenv('RAZORPAY_KEY')
     RAZORPAY_SECRET = os.getenv('RAZORPAY_SECRET')
+
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=10)

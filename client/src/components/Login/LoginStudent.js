@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserGraduate, faUserTie, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { jwtDecode } from 'jwt-decode';
 
-const SOCKET_SERVER_URL = 'http://localhost:5000';
-
 function LoginStudent() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -90,6 +88,9 @@ function LoginStudent() {
                 // console.log(data)
                 
                 localStorage.setItem('student-token', data.access_token); // Store JWT token
+                localStorage.setItem('student-refresh-token', data.refresh_token);  // Store refresh token
+                
+                // await refreshAccessToken(data.refresh_token);
                 navigate('/dashboard/student', { replace: true });
 
                 // Prevent back navigation to the login page
