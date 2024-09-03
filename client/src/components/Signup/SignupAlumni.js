@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faEnvelope, faLock, faPhone, faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,20 @@ function SignupAlumni() {
     const [passoutYear, setPassoutYear] = useState(null);
     const navigate = useNavigate();
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const alertRef = useRef(false); 
+
+    useEffect(() => {
+        if (alertRef.current) return; { // Check if the alert has already been shown
+            const alumniToken = localStorage.getItem('alumni-token');
+
+           if (alumniToken) {
+                alert('You are already logged in as an alumni!');
+                alertRef.current = true; // Mark alert as shown
+                navigate('/login/alumni');  // Redirect to alumni dashboard
+            }
+        }
+    }, [navigate]);
+
 
     const handleToggleClick = () => {
         setMobileMenuOpen(!isMobileMenuOpen);
@@ -48,7 +62,6 @@ function SignupAlumni() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         try {
             const response = await fetch('/signup/alumni', {
                 method: 'POST',
